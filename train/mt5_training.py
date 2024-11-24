@@ -1,3 +1,4 @@
+import os
 import os.path
 import warnings
 import sys
@@ -17,15 +18,17 @@ warnings.filterwarnings(action='ignore', category=torch.jit.TracerWarning)
 warnings.filterwarnings(action='ignore', category=FutureWarning)
 warnings.filterwarnings(action='ignore', category=UserWarning)
 
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
 
 def training():
     batch_size = 64
     total_epoch = 10
-    lr = 0.00001
+    lr = 0.0005
 
-    mt5_path = r'C:\Users\du\.cache\huggingface\hub\hub\t5-base-chinese'
+    mt5_path = r'/home/featurize/data/t5-pegasus-small'
     data_dir = os.path.join(root_dir, '../datas')
-    output_dir = os.path.join(root_dir, '../output/mt5')
+    output_dir = os.path.join(root_dir, '../output/t5-pegasus')
     os.makedirs(output_dir, exist_ok=True)
 
     example_input = (
@@ -40,8 +43,8 @@ def training():
     net = MT5BaseNet(model_path=mt5_path)
 
     loss_fn = get_loss_fn()
-    optimizer = get_optimizer(net, lr, 'adamw')
-    scheduler = get_scheduler(optimizer, 'linear')
+    optimizer = get_optimizer(net, lr, 'AdamW')
+    scheduler = get_scheduler(optimizer, 'StepLr')
     # scheduler = None
     trainer = Trainer(
         net=net,
@@ -57,6 +60,7 @@ def training():
         early_stop=True,
         early_stop_step=5,
         device='cuda'
+        # device='cpu'
     )
     trainer.fit()
 

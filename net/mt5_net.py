@@ -9,8 +9,8 @@ from transformers import AutoModel, AutoConfig
 class MT5BaseNet(nn.Module):
     def __init__(self, model_path: Union[str, PathLike]):
         super(MT5BaseNet, self).__init__()
-        self.mt5_model = AutoModel.from_pretrained(model_path)
         self.config = AutoConfig.from_pretrained(model_path)
+        self.mt5_model = AutoModel.from_pretrained(model_path)
         self.output = nn.Linear(self.config.d_model, self.config.vocab_size)
 
     def forward(self,

@@ -32,7 +32,8 @@ class CustomDataloader:
         for text in batch:
             # 拆分上下句
             text1, text2 = text.split('，')
-            if len(text1) < 3 or len(text2) < 3:
+            # if len(text1) < 3 or len(text2) < 3:
+            if len(text1) != len(text2) or len(text1) not in [5, 7]:
                 continue
             enc_text1 = self.prompt1 + text1
             enc1 = [self.token2idx[char] if char in self.token2idx.keys() else self.token2idx['<UNK>'] for char in

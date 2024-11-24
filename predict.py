@@ -6,7 +6,8 @@ import torch
 
 from net.custom_transformer import Transformer
 from net.mt5_net import MT5BaseNet
-from transformers import AutoTokenizer, AutoConfig
+from transformers import AutoConfig
+from tokenizer.tokenizer import PegasusTokenizer
 
 
 class CustomPredictor:
@@ -56,7 +57,7 @@ class CustomPredictor:
 
 class T5Predictor:
     def __init__(self, t5_model_path, model_dir):
-        self.t5_tokenizer = AutoTokenizer.from_pretrained(t5_model_path, legacy=False)
+        self.t5_tokenizer = PegasusTokenizer.from_pretrained(t5_model_path, legacy=False)
         self.t5_config = AutoConfig.from_pretrained(t5_model_path)
 
         # 模型参数恢复
@@ -73,8 +74,7 @@ class T5Predictor:
         pred_tokens = []
         self.net.eval().to(device=self.device)
         input_ids = self.t5_tokenizer.convert_tokens_to_ids(list(text))
-        input_ids.insert(0, 259)
-        input_ids.append(self.t5_tokenizer.eos_token_id)
+        input_ids.append(self.t5_tokenizer.vocab[self.t5_tokenizer.eos_token])
         dec_input_ids = [self.t5_config.decoder_start_token_id]
         while True:
             output = self.net(
@@ -93,16 +93,16 @@ class T5Predictor:
 if __name__ == '__main__':
     predictor = CustomPredictor('./output/custom_transformer')
     print('CustomPredictor: ')
-    print('请根据给定的上联生成下联：书绝龙庭羽')
-    print('下联：', predictor.predict('请根据给定的上联生成下联：书绝龙庭羽'))
+    print('请根据给定的上联生成下联：才子乘春来骋望')
+    print('下联：', predictor.predict('请根据给定的上联生成下联：才子乘春来骋望'))
     print('-' * 50)
-    print('请根据给定的上下联第一个字生成完整对联：风雨')
-    print('上下联：', predictor.predict('请根据给定的上下联第一个字生成完整对联：风雨'))
+    print('请根据给定的上下联第一个字生成完整对联：风云')
+    print('上下联：', predictor.predict('请根据给定的上下联第一个字生成完整对联：风云'))
 
-    t5predictor = T5Predictor(r'C:\Users\du\.cache\huggingface\hub\hub\t5-base-chinese', './output/mt5')
-    print('CustomPredictor: ')
-    print('请根据给定的上联生成下联:空山新雨后')
-    print('下联：', t5predictor.predict('请根据给定的上联生成下联:空山新雨后'))
-    print('-' * 50)
-    print('请根据给定的上下联第一个字生成完整对联:风云')
-    print('上下联：', t5predictor.predict('请根据给定的上下联第一个字生成完整对联:风雨'))
+    # t5predictor = T5Predictor(r'C:\Users\du\.cache\huggingface\hub\hub\t5-pegasus-small', './output/t5-pegasus')
+    # print('MT5: ')
+    # print('请根据给定的上联生成下联:才子乘春来骋望')
+    # print('下联：', t5predictor.predict('请根据给定的上联生成下联:才子乘春来骋望'))
+    # print('-' * 50)
+    # print('请根据给定的上下联第一个字生成完整对联:风云')
+    # print('上下联：', t5predictor.predict('请根据给定的上下联第一个字生成完整对联:风云'))
