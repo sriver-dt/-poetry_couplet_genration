@@ -26,7 +26,8 @@ def training():
     total_epoch = 10
     lr = 0.0005
 
-    mt5_path = r'/home/featurize/data/t5-pegasus-small'
+    # mt5_path = r'/home/featurize/data/t5-pegasus-small'
+    mt5_path = r'C:\Users\du\.cache\huggingface\hub\hub\t5-pegasus-small'
     data_dir = os.path.join(root_dir, '../datas')
     output_dir = os.path.join(root_dir, '../output/t5-pegasus')
     os.makedirs(output_dir, exist_ok=True)
