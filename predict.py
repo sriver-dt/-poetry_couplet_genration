@@ -21,7 +21,7 @@ class CustomPredictor:
             self.config = json.load(reader)
         self.config['is_training'] = False
 
-        net_states = torch.load(os.path.join(model_dir, 'best.pkl'), map_location=torch.device('cpu'))['model_state']
+        net_states = torch.load(os.path.join(model_dir, 'last.pkl'), map_location=torch.device('cpu'))['model_state']
         self.net = Transformer(**self.config)
         logging.info('正在进行模型参数恢复')
         missing_keys, unexpected_keys = self.net.load_state_dict(state_dict=net_states, strict=False)
@@ -93,16 +93,16 @@ class T5Predictor:
 if __name__ == '__main__':
     predictor = CustomPredictor('./output/custom_transformer')
     print('CustomPredictor: ')
-    print('请根据给定的上联生成下联：才子乘春来骋望')
-    print('下联：', predictor.predict('请根据给定的上联生成下联：才子乘春来骋望'))
+    print('请根据给定的上联生成下联：桃花流水杳然去')
+    print('下联：', predictor.predict('请根据给定的上联生成下联：桃花流水杳然去'))
     print('-' * 50)
-    print('请根据给定的上下联第一个字生成完整对联：风云')
-    print('上下联：', predictor.predict('请根据给定的上下联第一个字生成完整对联：风云'))
+    print('请根据给定的上下联第一个字生成完整对联：春秋')
+    print('上下联：', predictor.predict('请根据给定的上下联第一个字生成完整对联：春秋'))
 
-    # t5predictor = T5Predictor(r'C:\Users\du\.cache\huggingface\hub\hub\t5-pegasus-small', './output/t5-pegasus')
-    # print('MT5: ')
-    # print('请根据给定的上联生成下联:才子乘春来骋望')
-    # print('下联：', t5predictor.predict('请根据给定的上联生成下联:才子乘春来骋望'))
-    # print('-' * 50)
-    # print('请根据给定的上下联第一个字生成完整对联:风云')
-    # print('上下联：', t5predictor.predict('请根据给定的上下联第一个字生成完整对联:风云'))
+    t5predictor = T5Predictor(r'C:\Users\du\.cache\huggingface\hub\hub\t5-pegasus-small', './output/t5-pegasus')
+    print('MT5: ')
+    print('请根据给定的上联生成下联:桃花流水杳然去')
+    print('下联：', t5predictor.predict('请根据给定的上联生成下联:桃花流水杳然去'))
+    print('-' * 50)
+    print('请根据给定的上下联第一个字生成完整对联:春秋')
+    print('上下联：', t5predictor.predict('请根据给定的上下联第一个字生成完整对联:春秋'))
