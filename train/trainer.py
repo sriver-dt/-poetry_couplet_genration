@@ -108,18 +108,18 @@ class Trainer:
         self.net.train()
 
         pbar = tqdm(range(len(self.train_dataloader)), desc='training')
-        for batch_idx, ((batch_enc_input, batch_enc_mask, batch_dec_input, batch_dec_mask), batch_label) in enumerate(
+        for batch_idx, ((batch_input, batch_mask, batch_dec_input, batch_dec_mask), batch_label) in enumerate(
                 self.train_dataloader):
             self.global_step += 1
-            batch_enc_input = batch_enc_input.to(device=self.device)
-            batch_enc_mask = batch_enc_mask.to(device=self.device)
-            batch_dec_input = batch_dec_input.to(device=self.device)
-            batch_dec_mask = batch_dec_mask.to(device=self.device)
+            batch_input = batch_input.to(device=self.device)
+            batch_mask = batch_mask.to(device=self.device)
+            batch_dec_input = batch_dec_input.to(device=self.device) if batch_dec_input is not None else None
+            batch_dec_mask = batch_dec_mask.to(device=self.device) if batch_dec_mask is not None else None
             batch_label = batch_label.to(device=self.device)
             output = self.net(
-                input_ids=batch_enc_input,
+                input_ids=batch_input,
                 decoder_input_ids=batch_dec_input,
-                attention_mask=batch_enc_mask,
+                attention_mask=batch_mask,
                 decoder_attention_mask=batch_dec_mask
             )
             self.optim.zero_grad()
@@ -155,15 +155,15 @@ class Trainer:
         corrects = 0
         trues = 0
         with torch.no_grad():
-            for (batch_enc_input, batch_enc_mask, batch_dec_input, batch_dec_mask), batch_label in self.test_dataloader:
-                batch_enc_input = batch_enc_input.to(device=self.device)
-                batch_enc_mask = batch_enc_mask.to(device=self.device)
-                batch_dec_input = batch_dec_input.to(device=self.device)
-                batch_dec_mask = batch_dec_mask.to(device=self.device)
+            for (batch_input, batch_mask, batch_dec_input, batch_dec_mask), batch_label in self.test_dataloader:
+                batch_input = batch_input.to(device=self.device)
+                batch_mask = batch_mask.to(device=self.device)
+                batch_dec_input = batch_dec_input.to(device=self.device) if batch_dec_input is not None else None
+                batch_dec_mask = batch_dec_mask.to(device=self.device) if batch_dec_mask is not None else None
                 output = self.net(
-                    input_ids=batch_enc_input,
+                    input_ids=batch_input,
                     decoder_input_ids=batch_dec_input,
-                    attention_mask=batch_enc_mask,
+                    attention_mask=batch_mask,
                     decoder_attention_mask=batch_dec_mask
                 )
 
